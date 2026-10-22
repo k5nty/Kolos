@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KOLOS · Acoustic grain-pest probe</title>
+<meta name="description" content="KOLOS: a 3D-printed acoustic probe with machine learning for early detection of insect pests in stored grain. By Andrey Makarovsky.">
+<meta property="og:title" content="KOLOS · Acoustic grain-pest probe">
+<meta property="og:image" content="images/probe-full.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --card: #ffffff;
+    --ink: #141414;
+    --muted: #6b6b6b;
+    --line: #e6e6e2;
+    --red: #e11d3c;      /* the prototype's PLA red */
+    --red-dark: #b8122c;
+    --red-soft: #fde8ec;
+    --max: 1200px;
+    --gut: 32px;
+    --r: 16px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.6 Inter, system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+  img { display: block; max-width: 100%; height: auto; }
+  a { color: inherit; }
+  h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.03em; line-height: 1.08; }
+  p { margin: 0; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gut); }
+  .muted { color: var(--muted); }
+
+  /* nav */
+  nav { position: sticky; top: 0; z-index: 10; background: rgba(247,247,245,.88); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  nav .wrap { height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; letter-spacing: .06em; text-decoration: none; }
+  .brand i { width: 12px; height: 12px; border-radius: 3px; background: var(--red); }
+  nav ul { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; font-size: 15px; }
+  nav ul a { text-decoration: none; color: var(--muted); }
+  nav ul a:hover { color: var(--ink); }
+  .btn { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 10px; font-size: 15px; font-weight: 500; text-decoration: none; transition: background .15s; white-space: nowrap; }
+  .btn.red { background: var(--red); color: #fff; }
+  .btn.red:hover { background: var(--red-dark); }
+  .btn.line { border: 1px solid var(--line); background: var(--card); }
+  .btn.line:hover { border-color: #cfcfca; }
+
+  /* hero */
+  .hero { padding: 72px 0 0; }
+  .hero .wrap { display: grid; grid-template-columns: 1.15fr .85fr; gap: 56px; align-items: center; }
+  .label { display: inline-block; font-size: 14px; font-weight: 600; color: var(--red); margin-bottom: 18px; }
+  .hero h1 { font-size: clamp(42px, 6vw, 76px); letter-spacing: -0.04em; }
+  .hero .sub { font-size: 20px; color: var(--muted); margin-top: 24px; max-width: 560px; }
+  .by { margin-top: 28px; font-size: 15px; color: var(--muted); }
+  .by b { color: var(--ink); font-weight: 600; }
+  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 40px; }
+  .kpi { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .kpi b { display: block; font-size: 26px; font-weight: 600; letter-spacing: -0.03em; }
+  .kpi span { font-size: 13.5px; color: var(--muted); }
+  .hero .photo { border-radius: var(--r); overflow: hidden; }
+  .hero .photo img { aspect-ratio: 3 / 4; object-fit: cover; width: 100%; }
+
+  /* sections */
+  section { padding: 120px 0 0; }
+  .head { margin-bottom: 40px; max-width: 760px; }
+  .head h2 { font-size: clamp(32px, 4vw, 48px); }
+  .head p { margin-top: 14px; font-size: 18px; color: var(--muted); }
+  .grid { display: grid; gap: 24px; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; margin: 0; }
+  .card.pad { padding: 32px; }
+  .card h3 { font-size: 22px; letter-spacing: -0.02em; margin-bottom: 18px; }
+  figure.card figcaption { padding: 14px 18px 16px; font-size: 14.5px; color: var(--muted); }
+  figure.card figcaption b { color: var(--ink); font-weight: 600; }
+  .ph img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; }
+
+  .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .fact { border-top: 2px solid var(--ink); padding-top: 18px; }
+  .fact b { display: block; font-size: clamp(32px, 3.6vw, 46px); font-weight: 600; letter-spacing: -0.04em; line-height: 1.05; }
+  .fact p { margin-top: 10px; font-size: 14.5px; color: var(--muted); }
+  .fact small { display: block; margin-top: 6px; font-size: 12.5px; color: #9a9a95; }
+
+  .rows { list-style: none; margin: 0; padding: 0; }
+  .rows li { display: flex; justify-content: space-between; gap: 20px; padding: 12px 0; border-top: 1px solid var(--line); font-size: 15.5px; }
+  .rows li span:first-child { color: var(--muted); }
+  .rows li span:last-child { text-align: right; font-weight: 500; }
+
+  .bars { display: grid; gap: 24px; }
+  .bar-top { display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 8px; }
+  .bar-top span:last-child { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .bar { height: 12px; border-radius: 6px; background: #efefec; overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 6px; }
+  .note { margin-top: 22px; font-size: 14.5px; color: var(--muted); }
+
+  .big { font-size: clamp(72px, 10vw, 128px); font-weight: 600; letter-spacing: -0.06em; line-height: .95; color: var(--red); }
+  .big small { font-size: .45em; }
+  .list { list-style: none; margin: 24px 0 0; padding: 0; }
+  .list li { padding: 12px 0; border-top: 1px solid var(--line); font-size: 15.5px; }
+  .list li b { font-weight: 600; }
+  .list li span { color: var(--muted); }
+  .cm { display: grid; grid-template-columns: 84px repeat(4, 1fr); gap: 6px; font-size: 14px; }
+  .cm div { padding: 13px 4px; text-align: center; border-radius: 8px; font-variant-numeric: tabular-nums; font-weight: 500; }
+  .cm .h { color: var(--muted); font-size: 12.5px; padding: 0 0 4px; font-weight: 400; }
+  .cm .r { text-align: left; color: var(--muted); font-size: 12.5px; display: flex; align-items: center; padding-left: 0; font-weight: 400; }
+
+  .pilot { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .pilot .card b { display: block; font-size: 40px; font-weight: 600; letter-spacing: -0.04em; color: var(--red); line-height: 1.1; margin-bottom: 8px; }
+
+  .render { background: #f8f8f8; border: 1px solid var(--line); border-radius: var(--r); display: flex; justify-content: center; padding: 16px; }
+  .render img { max-height: 600px; width: auto; }
+
+  .paper { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; }
+  .viewer { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; height: 780px; }
+  .viewer iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .viewer .cover { display: none; }
+  .paper-side { display: grid; gap: 24px; align-content: start; }
+  .paper-side h3 { font-size: 26px; line-height: 1.2; margin-bottom: 10px; }
+  .ru { font-size: 14.5px; color: var(--muted); margin-bottom: 22px; }
+  .award { background: var(--ink); color: #fff; border-radius: var(--r); padding: 28px 32px; }
+  .award .label { margin-bottom: 10px; color: #ff6b82; }
+  .award p { font-size: 19px; line-height: 1.4; }
+  .btns { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  .code a { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; padding: 20px 0; border-top: 1px solid var(--line); text-decoration: none; }
+  .code a:last-child { border-bottom: 1px solid var(--line); }
+  .code a b { font-weight: 600; font-size: 18px; min-width: 200px; }
+  .code a span { color: var(--muted); font-size: 15px; flex: 1; }
+  .code a em { font-style: normal; color: var(--red); font-size: 14px; font-weight: 500; }
+  .code a:hover b { color: var(--red); }
+
+  footer { padding: 96px 0 48px; font-size: 14px; color: var(--muted); }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+
+  @media (max-width: 960px) {
+    nav ul { display: none; }
+    .hero .wrap, .paper { grid-template-columns: 1fr; }
+    .g3 { grid-template-columns: 1fr 1fr; }
+    .facts { grid-template-columns: 1fr 1fr; row-gap: 36px; }
+  }
+  @media (max-width: 640px) {
+    :root { --gut: 16px; }
+    body { font-size: 16px; }
+    section { padding-top: 88px; }
+    .hero { padding-top: 40px; }
+    .g2, .pilot { grid-template-columns: 1fr; }
+    .g3 { gap: 12px; }
+    .kpis { grid-template-columns: 1fr 1fr; }
+    .kpi:last-child { grid-column: span 2; }
+    .card.pad { padding: 22px; }
+    .cm { grid-template-columns: 64px repeat(4, 1fr); font-size: 13px; }
+    .cm .h, .cm .r { font-size: 10.5px; }
+    .viewer { height: auto; }
+    .viewer iframe { display: none; }
+    .viewer .cover { display: block; }
+    .code a { flex-direction: column; gap: 4px; }
+    .btn.hide-sm { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#top"><i></i>KOLOS</a>
+    <ul>
+      <li><a href="#problem">Problem</a></li>
+      <li><a href="#build">Build</a></li>
+      <li><a href="#ml">Machine learning</a></li>
+      <li><a href="#pilot">Pilot</a></li>
+      <li><a href="#paper">Paper</a></li>
+      <li><a href="#code">Code</a></li>
+    </ul>
+    <a class="btn red" href="#paper">Research paper</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <span class="label">Acoustic grain-pest probe</span>
+      <h1>Listening for pests inside stored grain</h1>
+      <p class="sub">A 3D-printed probe with a microphone, an ESP32 and a machine-learning classifier that detects activity inside a grain pile.</p>
+      <p class="by">By <b>Andrey Makarovsky</b> · Letovo School, Moscow · built for grain warehouses in Orenburg</p>
+      <div class="kpis">
+        <div class="kpi"><b>93.4%</b><span>classifier accuracy</span></div>
+        <div class="kpi"><b>≤1,200 ₽</b><span>parts cost</span></div>
+        <div class="kpi"><b>Laureate</b><span>All-Russian Timiryazev Contest</span></div>
+      </div>
+    </div>
+    <div class="photo"><img src="images/probe-full.jpg" alt="The full KOLOS prototype: 1 m aluminium tube with a red 3D-printed sensor chamber and electronics box" width="960" height="1280"></div>
+  </div>
+</header>
+
+<section id="problem">
+  <div class="wrap">
+    <div class="head">
+      <span class="label">01 · Problem</span>
+      <h2>Infestations are found too late</h2>
+      <p>Orenburg is my hometown and one of Russia's main grain regions. Most warehouses there check grain by hand sampling, and imported monitoring systems have become harder and more expensive to get.</p>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>5.7–7.8%</b><p>of stored grain eaten by insects within 6 months</p><small>VNIIZ</small></div>
+      <div class="fact"><b>up to 7 Mt</b><p>of grain lost to storage pests in Russia per year</p><small>Rosselkhoznadzor</small></div>
+      <div class="fact"><b>4.15 Mt</b><p>threshed in Orenburg region by 15 Sep 2026, 2nd in the Volga district</p><small>Orenburg region government</small></div>
+      <div class="fact"><b>≈45%</b><p>of Orenburg storage capacity is outside elevators</p><small>Orenburg Ministry of Agriculture</small></div>
+    </div>
+  </div>
+</section>
+
+<section id="build">
+  <div class="wrap">
+    <div class="head">
+      <span class="label">02 · Build</span>
+      <h2>The prototype</h2>
+      <p>July–August 2026. Modelled in Fusion 360, sliced in OrcaSlicer, printed on a Creality K1C.</p>
+    </div>
+    <div class="grid g3">
+      <figure class="card ph"><img src="images/printed-chamber.jpg" alt="Printed half of the perforated chamber" width="960" height="1280" loading="lazy"><figcaption><b>Printed chamber.</b> Perforated PLA shell.</figcaption></figure>
+      <figure class="card ph"><img src="images/microphone.jpg" alt="MAX9814 microphone mounted inside the chamber" width="960" height="1280" loading="lazy"><figcaption><b>Microphone.</b> MAX9814 with auto gain.</figcaption></figure>
+      <figure class="card ph"><img src="images/chamber-open.jpg" alt="Open sensor chamber with wiring into the tube" width="960" height="1280" loading="lazy"><figcaption><b>Wiring.</b> Runs up through the 1 m tube.</figcaption></figure>
+      <figure class="card ph"><img src="images/chamber-closed.jpg" alt="Closed sensor chamber with nose cone" width="960" height="1280" loading="lazy"><figcaption><b>Sensor head.</b> Closed chamber and nose cone.</figcaption></figure>
+      <figure class="card ph"><img src="images/esp32-box.jpg" alt="ESP32 board inside the printed electronics box" width="960" height="1280" loading="lazy"><figcaption><b>Electronics.</b> ESP32 in the printed box.</figcaption></figure>
+      <figure class="card ph"><img src="images/probe-desk.jpg" alt="Assembled probe held at the desk" width="960" height="1280" loading="lazy"><figcaption><b>Assembled.</b> Ready for measurements.</figcaption></figure>
+    </div>
+    <div class="grid g2" style="margin-top:24px">
+      <div class="card pad">
+        <h3>Components</h3>
+        <ul class="rows">
+          <li><span>Body</span><span>1 m aluminium tube</span></li>
+          <li><span>Printed parts</span><span>Chamber, nose cone, box · PLA</span></li>
+          <li><span>Sensor</span><span>MAX9814 microphone</span></li>
+          <li><span>Controller</span><span>ESP32, GPIO34, 12-bit ADC</span></li>
+          <li><span>Power / data</span><span>USB</span></li>
+          <li><span>Parts cost</span><span>1,000–1,200 ₽</span></li>
+        </ul>
+      </div>
+      <div class="card pad">
+        <h3>Firmware</h3>
+        <ul class="rows">
+          <li><span>Window</span><span>0.25 s · amplitude + RMS</span></li>
+          <li><span>Calibration</span><span>10 s of background → RMS₀</span></li>
+          <li><span>Event</span><span>RMS &gt; 1.25 × RMS₀</span></li>
+          <li><span>Buffer</span><span>last 20 windows</span></li>
+          <li><span>Status</span><span>0–2 Normal · 3–7 Attention · 8+ Alert</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="signal">
+  <div class="wrap">
+    <div class="head">
+      <span class="label">03 · Signal</span>
+      <h2>First measurements</h2>
+    </div>
+    <div class="grid g2" style="align-items:start">
+      <div class="card pad">
+        <h3>Amplitude, ADC units</h3>
+        <div class="bars">
+          <div><div class="bar-top"><span>Quiet background</span><span>300–500</span></div><div class="bar"><i style="width:24%;background:#b5b5b0"></i></div></div>
+          <div><div class="bar-top"><span>Light knocks on the probe</span><span>1,500–2,000</span></div><div class="bar"><i style="width:100%;background:var(--red)"></i></div></div>
+        </div>
+        <p class="note">Light knocks are 3–7× above background. Tests with live insects in grain are next.</p>
+      </div>
+      <figure class="card"><img src="images/serial-log.jpg" alt="Serial monitor: calibration, amplitude, RMS, activity, events and status" width="1280" height="544" loading="lazy"><figcaption>Serial output: calibration, then amplitude, RMS, activity, events and status.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section id="ml">
+  <div class="wrap">
+    <div class="head">
+      <span class="label">04 · Machine learning</span>
+      <h2>Insect-like signal or noise?</h2>
+      <p>Random Forest (scikit-learn), trained on my own recordings from the prototype.</p>
+    </div>
+    <div class="grid g2">
+      <div class="card pad">
+        <div class="big">93.4<small>%</small></div>
+        <p class="muted" style="margin-top:10px">accuracy on held-out data, 267 of 286 windows</p>
+        <ul class="list">
+          <li><b>4 classes</b> <span>· silence, single knocks, repeated impulses, airborne noise</span></li>
+          <li><b>Insect stand-in</b> <span>· metronome impulses, 106 / 106 correct</span></li>
+          <li><b>12 features</b> <span>· level, spread, peaks, autocorrelation</span></li>
+          <li><b>Window</b> <span>· 20 amplitudes, step 5</span></li>
+          <li><b>Split</b> <span>· first 70% of each recording to train, last 30% to test</span></li>
+        </ul>
+      </div>
+      <div class="card pad">
+        <h3>Confusion matrix</h3>
+        <p class="muted" style="font-size:14px;margin:-10px 0 18px">Rows: true class · columns: predicted</p>
+        <div class="cm" id="cm"></div>
+      </div>
+    </div>
+    <figure class="card" style="margin-top:24px"><img src="images/live-recognition.jpg" alt="Classifier running live on the probe's serial stream" width="1280" height="643" loading="lazy"><figcaption>Live recognition from the probe. «тишина» = silence, «шум в воздухе» = airborne noise.</figcaption></figure>
+  </div>
+</section>
+
+<section id="pilot">
+  <div class="wrap">
+    <div class="head">
+      <span class="label">05 · Pilot</span>
+      <h2>Orenburg warehouses</h2>
+    </div>
+    <div class="pilot">
+      <div class="card pad"><b>2</b><p class="muted">grain warehouses in the Orenburg region where I piloted the prototype</p></div>
+      <div class="card pad"><b>Positive</b><p class="muted">feedback from the managers of both warehouses</p></div>
+      <div class="card pad"><b>≈3,000 t</b><p class="muted">floor warehouse where I interviewed the manager about how grain is checked</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="dashboard">
+  <div class="wrap">
+    <div class="head">
+      <span class="label">06 · Dashboard</span>
+      <h2>Web dashboard</h2>
+      <p>Next.js, test data, Russian interface.</p>
+    </div>
+    <div class="grid g2" style="align-items:start">
+      <figure class="card"><img src="images/dashboard-overview.jpg" alt="Dashboard: all storage units with probe status" width="1600" height="698" loading="lazy"><figcaption><b>Overview.</b> Every storage unit and its status.</figcaption></figure>
+      <figure class="card"><img src="images/dashboard-silo.jpg" alt="Dashboard: one storage unit with probe depths and readings" width="1600" height="903" loading="lazy"><figcaption><b>Storage unit.</b> Probe depths, readings, alerts.</figcaption></figure>
+    </div>
+    <div class="btns" style="margin-top:24px"><a class="btn line" href="https://andreymakar56.github.io/grain-infestation-dashboard/" target="_blank" rel="noopener">Open live demo ↗</a></div>
+  </div>
+</section>
+
+<section id="next">
+  <div class="wrap">
+    <div class="head">
+      <span class="label">07 · Next</span>
+      <h2>Industrial probe</h2>
+      <p>Designed, not built yet.</p>
+    </div>
+    <div class="grid g2" style="align-items:center">
+      <div class="render"><img src="images/probe-3d.png" alt="3D render of the industrial KOLOS probe" width="900" height="1400" loading="lazy"></div>
+      <ul class="list" style="margin:0">
+        <li><b>Piezo sensor</b> <span>· on a stainless-steel rod, picks up vibration through the grain</span></li>
+        <li><b>Bait chamber</b> <span>· perforated, draws insects to the sensor</span></li>
+        <li><b>SHT31</b> <span>· temperature and humidity</span></li>
+        <li><b>Battery + radio</b> <span>· gateway → server → dashboard</span></li>
+        <li><b>Then</b> <span>· tests with live insects, installation in Orenburg warehouses</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="paper">
+  <div class="wrap">
+    <div class="head">
+      <span class="label">08 · Research paper</span>
+      <h2>Read the paper</h2>
+      <p>31 pages, in Russian.</p>
+    </div>
+    <div class="paper">
+      <div class="viewer">
+        <iframe src="docs/KOLOS_research_paper_RU.pdf#navpanes=0&view=FitH" title="KOLOS research paper (PDF)" loading="lazy"></iframe>
+        <a class="cover" href="docs/KOLOS_research_paper_RU.pdf" target="_blank" rel="noopener"><img src="images/paper-cover.jpg" alt="Title page of the KOLOS research paper" width="706" height="1000" loading="lazy"></a>
+      </div>
+      <div class="paper-side">
+        <div class="card pad">
+          <h3>KOLOS: an acoustic probe with machine learning for early detection of insect pests in stored grain</h3>
+          <p class="ru">«КОЛОС»: акустический зонд с машинным обучением для раннего обнаружения насекомых-вредителей в хранящемся зерне</p>
+          <ul class="rows">
+            <li><span>Author</span><span>Andrey Makarovsky</span></li>
+            <li><span>Supervisor</span><span>A. D. Sukhov, Letovo School</span></li>
+            <li><span>Contents</span><span>problem, design, measurements, ML, economics</span></li>
+          </ul>
+        </div>
+        <div class="award">
+          <span class="label">Recognition · 2026</span>
+          <p>Laureate of the remote round, All-Russian Timiryazev Contest «AIC: Youth, Science, Innovation». Invited to the national finals in Moscow.</p>
+        </div>
+        <div class="btns">
+          <a class="btn red" href="docs/KOLOS_research_paper_RU.pdf" target="_blank" rel="noopener">Open PDF</a>
+          <a class="btn line" href="docs/KOLOS_research_paper_RU.pdf" download>Download</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="code">
+  <div class="wrap">
+    <div class="head">
+      <span class="label">09 · Code</span>
+      <h2>Source</h2>
+    </div>
+    <div class="code">
+      <a href="code/kolos_ai.py"><b>kolos_ai.py</b><span>features, Random Forest training, live recognition</span><em>View ↗</em></a>
+      <a href="code/kolos_log.py"><b>kolos_log.py</b><span>records the probe's serial stream into labelled files</span><em>View ↗</em></a>
+      <a href="code/firmware_v1/firmware_v1.ino"><b>Firmware v1</b><span>amplitude in 100 ms windows</span><em>View ↗</em></a>
+      <a href="code/firmware_v2/kolos_firmware.ino"><b>Firmware v2</b><span>calibration, events, Normal / Attention / Alert</span><em>View ↗</em></a>
+      <a href="https://github.com/k5nty/Kolos" target="_blank" rel="noopener"><b>GitHub</b><span>all project files</span><em>Open ↗</em></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Andrey Makarovsky · Letovo School, Moscow · 2026</span>
+    <a href="#top" style="text-decoration:none">Back to top ↑</a>
+  </div>
+</footer>
+
+<script>
+  const names = ["Silence", "Knocks", "Impulses", "Noise"];
+  const m = [[55,0,0,13],[0,32,1,1],[0,0,106,0],[4,0,0,74]];
+  let html = "<div></div>" + names.map(s => `<div class="h">${s}</div>`).join("");
+  m.forEach((row, i) => {
+    const total = row.reduce((a, b) => a + b, 0);
+    html += `<div class="r">${names[i]}</div>`;
+    row.forEach((v, j) => {
+      const s = v / total;
+      const bg = v === 0 ? "#f4f4f1" : i === j ? `rgba(225,29,60,${0.25 + 0.75 * s})` : `rgba(20,20,20,${0.08 + 0.4 * s})`;
+      const fg = v === 0 ? "#bdbdb7" : (i === j && s > 0.5) ? "#fff" : "#141414";
+      html += `<div style="background:${bg};color:${fg}">${v}</div>`;
+    });
+  });
+  document.getElementById("cm").innerHTML = html;
+</script>
+</body>
+</html>
